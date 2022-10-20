@@ -14,7 +14,7 @@ class exact_data_from_result(object):
        and get my mood data from result'''
 
     def __init__(self):
-        print("Start to exact the qq number item from get_friends result")
+        print("")
 
     def exact_qq_number(self):
         '''Get qq number data from json file'''

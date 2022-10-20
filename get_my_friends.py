@@ -30,7 +30,7 @@ class Get_friends_number(object):
             referer = 'http://qzs.qq.com/qzone/v8/pages/setting/visit_v8.html'
             self.headers['Referer'] = referer
 
-            print("\tDealing with position\t%d." % position)
+            print("\t正在获取好友列表\t%d." % position)
             res = requests.get(url, headers=self.headers)
             html = res.text
             with open('friends/offset' + str(position) + '.json', 'w', encoding='utf-8') as f:
@@ -50,4 +50,4 @@ class Get_friends_number(object):
                 key = False
 
             position += 50
-            sleep(5)
+            sleep(1)

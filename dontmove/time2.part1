@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+       
+    <meta charset="utf-8">
+    <script src="../../dontmove/echarts.js"></script>
+  
+</head>
+<body>
+	
+    <div id="main" style="width: 800px;height:600px;"></div>	
+   
+   
+   <script type="text/javascript">
+   	
+var myChart = echarts.init(document.getElementById('main'));
+var colors = ['#5793f3', '#d14a61', '#675bba','#bda29a','#6e7074', '#546570', '#c4ccd3'];
+
+
+	option = {
+		color: colors,
+	title:
+	{
+		text:'发表时间统计图',
+	},
+    animation: true,
+    legend: {
+        data:

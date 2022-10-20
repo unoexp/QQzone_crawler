@@ -21,37 +21,38 @@ def get_cookie():
 
 cookie = get_cookie()
 
-headers = {
-    'accept': '*/*',
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36',
-    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-    'accept-language': 'en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,zh-TW;q=0.6',
-    'accept-encoding': 'gzip, deflate, br',
-    'cache-control': 'no-cache',
-    'pragma': 'no-cache',
-    'cookie': cookie,
-    'connection': 'keep-alive'
-}
-
+headers = {'host': 'h5.qzone.qq.com',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'zh,zh-CN;q=0.8,en-US;q=0.5,en;q=0.3',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Cookie': cookie,
+            'connection': 'keep-alive'}
+hea= {'host': 'user.qzone.qq.com',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'zh,zh-CN;q=0.8,en-US;q=0.5,en;q=0.3',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Cookie': cookie,
+            'connection': 'keep-alive'}
 def get_g_tk():
     ''' make g_tk value'''
-
-    pskey_start = cookie.find('p_skey=')
-    pskey_end = cookie.find(';', pskey_start)
-
-    # 有时 p_skey 会出现在 cookie 的最后，此时 pskey_end 会返回-1
-    # 应该直接取到结束
-    if pskey_end == -1:
-        p_skey = cookie[pskey_start+7:]
-    else:
+    with open ('cookie_file') as f:
+        tex=f.read()
+    if 'p_skey=' in tex:
+        
+        pskey_start = cookie.find('p_skey=')
+        pskey_end = cookie.find(';', pskey_start)
         p_skey = cookie[pskey_start+7: pskey_end]
-
-    h = 5381
-
-    for s in p_skey:
-        h += (h << 5) + ord(s)
-
-    return h & 2147483647
+    
+        h = 5381
+    
+        for s in p_skey:
+            h += (h << 5) + ord(s)
+    
+        return h & 2147483647
+    else :
+        print('请检查cookie文件是否正确')
 
 g_tk = get_g_tk()
 
@@ -59,11 +60,9 @@ g_tk = get_g_tk()
 def get_qzonetoken(qqnum):
     '''获取qzonetoken，它位于空间首页的源代码中'''
     index_url = "https://user.qzone.qq.com/%s" % qqnum
-    headers['referer'] = 'https://qzs.qq.com/qzone/v5/loginsucc.html?para=izone'
-    headers['upgrade-insecure-requests'] = '1'
-    res = requests.get(index_url, headers=headers)
+    res = requests.get(index_url, headers=hea)
     src = res.text
-    search_res = re.search(r'g_qzonetoken.*return\s*"(.*)";}', src, re.S)
+    search_res = re.search(r'g_qzonetoken.*"(.*)";}', src, re.S)
     return search_res.group(1) if search_res else ''
 
 
@@ -87,6 +86,7 @@ def parse_moods_url(qqnum):
     host = "https://h5.qzone.qq.com/proxy/domain/taotao.qq.com/cgi-bin/emotion_cgi_msglist_v6?"
 
     url = host + parse.urlencode(params)
+    
     return url
 
 def parse_friends_url():
@@ -95,11 +95,11 @@ def parse_friends_url():
        self cookie
     '''
 
-    cookie = headers['cookie']
+    cookie = headers['Cookie']
     qq_start = cookie.find('uin=o')
     qq_end = cookie.find(';', qq_start)
     qqnumber = cookie[qq_start+5 : qq_end]
-    if qqnumber[0] == '0':
+    if qqnumber[0] == 0:
         qqnumber = qqnumber[1:]
     # 先获取qzonetoken
     qzonetoken = get_qzonetoken(qqnumber)
@@ -111,7 +111,34 @@ def parse_friends_url():
 
     host = "https://h5.qzone.qq.com/proxy/domain/base.qzone.qq.com/cgi-bin/right/get_entryuinlist.cgi?"
     url = host + parse.urlencode(params)
+    print(url)
+    return url
 
+def parse_visitor(qq):
+    '''This method only generate the friends of the owner
+       So do not need to get qq number, just get it from
+       self cookie
+    '''
+
+    cookie = headers['Cookie']
+    qq_start = cookie.find('uin=o')
+    qq_end = cookie.find(';', qq_start)
+    qqnumber = cookie[qq_start+5 : qq_end]
+    if qqnumber[0] == 0:
+        qqnumber = qqnumber[1:]
+    # 先获取qzonetoken
+    qzonetoken = get_qzonetoken(qqnumber)
+    params = {"uin": qq,
+              'mask':2,
+              "g_tk": g_tk,
+              'page':1,
+              "fupdate": 1,
+              
+              "qzonetoken": qzonetoken}
+
+    host = "https://h5.qzone.qq.com/proxy/domain/g.qzone.qq.com/cgi-bin/friendshow/cgi_get_visitor_simple?"
+    url = host + parse.urlencode(params)
+    print(url)
     return url
 
 def check_path(path):
@@ -120,4 +147,4 @@ def check_path(path):
     '''
 
     if not os.path.exists(path):
-        os.mkdir(path)
+        os.makedirs(path)

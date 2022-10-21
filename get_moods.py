@@ -1,6 +1,5 @@
 import requests
 import os
-import sys
 import time
 import util
 import datetime
@@ -54,7 +53,7 @@ class Get_moods(object):
                 key = False
 
             if '"subcode":-4001' in con:
-                exit(f'cookie有误{time.ctime()}\n')
+                exit('cookie有误, 请检查后重试')
 
             pos += 20
             # 防ban

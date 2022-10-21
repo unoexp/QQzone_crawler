@@ -3,30 +3,50 @@ import re
 from urllib import parse
 import requests
 
-
-def get_cookie():
-    with open('cookie_file') as f:
-        cookie = f.read()
-    cookie = cookie.replace('\n', '')
-    return cookie
-
-
-cookie = get_cookie()
-
 headers = {'host': 'h5.qzone.qq.com',
            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
            'Accept-Language': 'zh,zh-CN;q=0.8,en-US;q=0.5,en;q=0.3',
            'Accept-Encoding': 'gzip, deflate, br',
-           'Cookie': cookie,
+           'Cookie': '',
            'connection': 'keep-alive'}
 hea = {'host': 'user.qzone.qq.com',
        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.90 Safari/537.36',
        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
        'Accept-Language': 'zh,zh-CN;q=0.8,en-US;q=0.5,en;q=0.3',
        'Accept-Encoding': 'gzip, deflate, br',
-       'Cookie': cookie,
+       'Cookie': '',
        'connection': 'keep-alive'}
+
+
+def get_cookie():
+    with open('cookie_file') as f:
+        cookie = f.read()
+    try:
+        d = eval(cookie)
+        cookie = ''
+        for x in d:
+            cookie += x + '=' + d[x] + '; '
+    except:
+        cookie = cookie.replace('\n', '')
+    return cookie
+
+
+def calc_cookie():
+    global cookie
+    global g_tk
+    cookie = get_cookie()
+    g_tk = get_g_tk()
+    headers['Cookie'] = cookie
+    hea['Cookie'] = cookie
+
+
+def bkn(p_skey):
+    # 计算bkn
+    h = 5381
+    for s in p_skey:
+        h += (h << 5) + ord(s)
+    return h & 2147483647
 
 
 def get_g_tk():
@@ -36,15 +56,15 @@ def get_g_tk():
         pskey_start = cookie.find('p_skey=')
         pskey_end = cookie.find(';', pskey_start)
         p_skey = cookie[pskey_start + 7: pskey_end]
-        h = 5381
-        for s in p_skey:
-            h += (h << 5) + ord(s)
-        return h & 2147483647
+        return bkn(p_skey)
+    elif 'p_skey' in tex:
+        try:
+            tex = eval(tex)
+        except:
+            exit('cookie文件格式有误')
+        return bkn(tex['p_skey'])
     else:
-        print('请检查cookie文件是否正确')
-
-
-g_tk = get_g_tk()
+        exit('请检查cookie文件是否正确')
 
 
 def get_qzonetoken(qqnum):
@@ -120,3 +140,14 @@ def parse_visitor(qq):
 def check_path(path):
     if not os.path.exists(path):
         os.makedirs(path)
+
+
+def ptqrToken(qrsig):
+    # 计算ptqrtoken
+    n, i, e = len(qrsig), 0, 0
+
+    while n > i:
+        e += (e << 5) + ord(qrsig[i])
+        i += 1
+
+    return 2147483647 & e

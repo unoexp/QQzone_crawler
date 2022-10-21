@@ -1,0 +1,10 @@
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        // 绘制图表。
+        echarts.init(document.getElementById('main1')).setOption({
+            series: {
+                type: 'pie',
+                data:[

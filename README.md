@@ -15,7 +15,7 @@ QQ 空间动态爬虫, 利用cookie登录获取所有可访问好友空间的动
 
 **get_moods.py**： 用于从QQ空间服务器获取包含每个好友空间发表的说说的文件, 其中包含每个说说的发表时间, 内容(包括图片与视频), 评论, 评论的评论, 地点信息, 手机信息等
 
-**cookie_file**： 用于放置自己登录QQ空间后得到的cookie. 从浏览器中复制出来放在这个文件内即可, 在负责处理cookie的函数中有对应的处理代码来处理换行符, 但还是希望不要出现多行, 末尾也不要有多余的空行. **但要注意的是, 这个文件里面只能放一个cookie. 它的作用是方便设置cookie, 而不是用于反反爬虫.** 如果不知道怎么获取cookie, 请看[这里](http://www.xjr7670.com/articles/how-to-get-qzone-cookie.html)
+**cookie_file**： 用于放置自己登录QQ空间后得到的cookie. 程序可以使用扫码登录来自动获取cookie, 操作相比手动登录获取cookie更加简洁方便. 若发生登录失败或其他错误, 请尝试手动获取, 从浏览器中复制出来放在这个文件内即可. 如果不知道怎么手动获取cookie, 请看[这里](http://www.xjr7670.com/articles/how-to-get-qzone-cookie.html), 
 
 ---
 

@@ -18,7 +18,7 @@ def emoji2pic(a):
                 l = a.index('[em]')
                 r = a.index('[/em]')
                 em = a[l + 4:r]
-                a = a[:l] + '<img src="http://qzonestyle.gtimg.cn/qzone/em/' + em + '.gif">' + a[r + 5:]
+                a = a[:l] + '<img class="emojy" src="http://qzonestyle.gtimg.cn/qzone/em/' + em + '.gif">' + a[r + 5:]
             except:
                 break
     return a
@@ -173,12 +173,12 @@ class Get_detail(object):
             else:
                 f = open(os.path.join('result', 'all_html', self.timen, qq_num + '.html'), 'a', encoding='utf-8')
 
-            f.write('<br><br>内容     ' + str(emoji2pic(mood_item['content'])))
+            f.write('<div class="item"><div class="text">' + emoji2pic(mood_item['content']) + '</div>')
 
             for pic in range(0, pic_total):
                 try:
-                    f.write('<br>pic' + str(pic) + '&nbsp&nbsp<img src="' + str(
-                        mood_item['pic' + str(pic)]) + '"' + 'width=400px;height=400*this.height/this.width' + '>')
+                    f.write('<br>' + '&nbsp&nbsp<img class="pic" src="' + str(
+                        mood_item['pic' + str(pic)]) + '"' +  '>')
                 except:
                     break
             if video:
@@ -194,7 +194,7 @@ class Get_detail(object):
             if mood_item['loc_pos_x'] != '' or mood_item['loc_pos_y'] != '':
                 f.write('<br>维度' + str(mood_item['loc_pos_x']) + '<br>经度' + str(mood_item['loc_pos_y']))
 
-            for tempc in range(0, mood['cmtnum']):
+            for tempc in range(0, min(10,mood['cmtnum'])):
                 try:
                     lenlis = len(mood['commentlist'][tempc]['list_3'])  # 楼中楼num
                 except:
@@ -202,36 +202,36 @@ class Get_detail(object):
                 try:
                     f.write('<br><br>')
                     # head pic
-                    f.write('<img src=http://qlogo1.store.qq.com/qzone/' + str(
+                    f.write('<img class="qlogo" src=http://qlogo1.store.qq.com/qzone/' + str(
                         mood_item['commuin' + str(tempc)]) + '/' + str(
                         mood_item['commuin' + str(tempc)]) + '/30>' + str(mood_item['commuin' + str(tempc)]))
 
-                    f.write('<br>' + '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + str(
-                        emoji2pic(mood_item['comm' + str(tempc)])))
+                    f.write('<div class="text"><br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + str(
+                        emoji2pic(mood_item['comm' + str(tempc)])) + '</div>')
                     if 'pic' in mood['commentlist'][tempc]:
-                        f.write('<img src=' + mood['commentlist'][tempc]['pic'][0][
-                            'hd_url'] + '" width=200px;height=200*this.height/this.width' + '>')
+                        f.write('<br><img class="pic" src=' + mood['commentlist'][tempc]['pic'][0][
+                            'hd_url'] + '>')
                     f.write('<br>&nbsp&nbsp时间' + str(mood_item['commt' + str(tempc)]))
                 except:
                     pass
                 try:
                     for templ in range(0, lenlis):
                         f.write(
-                            '<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<img src=http://qlogo1.store.qq.com/qzone/' + str(
+                            '<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<img class="qlogo" src=http://qlogo1.store.qq.com/qzone/' + str(
                                 mood_item['commrename' + str(tempc) + str(templ)]) + '/' + str(
                                 mood_item['commrename' + str(tempc) + str(templ)]) + '/30>')
                         f.write('&nbsp&nbsp' + str(mood_item['commrename' + str(tempc) + str(templ)]))  # 楼中楼人
 
-                        f.write('<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + str(
-                            emoji2pic(mood_item['commre' + str(tempc) + str(templ)])))  # 楼中楼内容
+                        f.write('<div class="text"><br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp' + str(
+                            emoji2pic(mood_item['commre' + str(tempc) + str(templ)])) + '</div>') # 楼中楼内容
                         if not mood_item['rerepic'] == None:
-                            f.write('<img src=' + mood_item[
-                                'rerepic'] + '" width=200px;height=200*this.height/this.width' + '>')
+                            f.write('<img class="pic" src=' + mood_item[
+                                'rerepic'] + '>')
                         f.write('<br>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp评论时间' + str(
                             mood_item['commtime' + str(tempc) + str(templ)]))
                 except:
                     pass
-            f.write('<br>---------------------------分隔线---------------------------<br>')
+            f.write('</div>')
             f.close()
             self.pos_count += 1
             self.countt += 1
@@ -240,7 +240,7 @@ class Get_detail(object):
 
 def time1(qq_num, year, count):
     util.check_path(os.path.join('report', qq_num))
-    f = open(os.path.join('report', qq_num, 'time1.html'), 'a', encoding='utf-8')
+    f = open(os.path.join('report', qq_num, 'time1.html'), 'w', encoding='utf-8')
 
     shutil.copyfileobj(open(os.path.join('resources', 'time1.part1'), 'r'), f)
     f.write(str(year))
@@ -307,32 +307,32 @@ def stime(a):
     return res
 
 
-def auto_collect(qq_num):
-    date_ = date_today
-    pos = 0
-    app = Get_detail('1', date_)
-    mood_dict = app.make_dict(1, qq_num, date_)
-    util.check_path(os.path.join('result', 'single_html', qq_num))
-    raw_path = os.path.join('content', 'single', date_, qq_num)
-    res_path = os.path.join('result', 'single_html', qq_num, date_ + '.html')
-    with open(res_path, 'w', encoding='utf-8') as f:
-        f.write('<body>')
-    for dirName, fileName in mood_dict.items():
-        for each_file in fileName:
-            filename = os.path.join(raw_path, str(pos))
-            # 所有文件已经读取完毕
-            if not os.path.exists(filename):
-                break
-            app.exact_mood_data(qq_num, filename)
-            year = app.year
-            count = app.count
-            pos += 20
-    print('正在处理数据...')
-    for s in range(0, len(app.t)):
-        for m in range(0, len(app.t[s])):
-            app.t[s][m][0] = app.tyear[s] + '/' + app.t[s][m][0]
-    time1(qq_num, year, count)
-    time2(qq_num, app.tyear, app.t)
+# def auto_collect(qq_num):
+#     date_ = date_today
+#     pos = 0
+#     app = Get_detail('1', date_)
+#     mood_dict = app.make_dict(1, qq_num, date_)
+#     util.check_path(os.path.join('result', 'single_html', qq_num))
+#     raw_path = os.path.join('content', 'single', date_, qq_num)
+#     res_path = os.path.join('result', 'single_html', qq_num, date_ + '.html')
+#     with open(res_path, 'w', encoding='utf-8') as f:
+#         f.write('<body>')
+#     for dirName, fileName in mood_dict.items():
+#         for each_file in fileName:
+#             filename = os.path.join(raw_path, str(pos))
+#             # 所有文件已经读取完毕
+#             if not os.path.exists(filename):
+#                 break
+#             app.exact_mood_data(qq_num, filename)
+#             year = app.year
+#             count = app.count
+#             pos += 20
+#     print('正在处理数据...')
+#     for s in range(0, len(app.t)):
+#         for m in range(0, len(app.t[s])):
+#             app.t[s][m][0] = app.tyear[s] + '/' + app.t[s][m][0]
+#     time1(qq_num, year, count)
+#     time2(qq_num, app.tyear, app.t)
 
 
 # -----------------------------------main------------------------------------
@@ -371,6 +371,10 @@ def main(auto=0, qq_num=0):
 
         res_path = os.path.join('result', 'single_html', qq_num, date_ + '.html')
         with open(res_path, 'w', encoding='utf-8') as f:
+            f.write('<!doctype html><head><meta charset = "UTF-8">')
+            f.write('<title>' + qq_num + '</title>')
+            f.write('<link rel="stylesheet" href="../../../resources/css.css">')
+            f.write('</head>')
             f.write('<body>')
 
         for dirName, fileName in mood_dict.items():
@@ -397,8 +401,11 @@ def main(auto=0, qq_num=0):
         for dirName, fileName in mood_dict.items():
             res_path = os.path.join('result', 'all_html', date_, dirName + '.html')
             with open(res_path, 'w', encoding='utf-8') as f:
+                f.write('<!doctype html><head><meta charset = "UTF-8">')
+                f.write('<title>' + dirName + '</title>')
+                f.write('<link rel="stylesheet" href="../../../resources/css.css">')
+                f.write('</head>')
                 f.write('<body>')
-                f.write('<head><meta charset = "UTF-8"><title>' + dirName + '</title>' + '</head><body>')
 
             for each_file in fileName:
                 filename = os.path.join('content', 'all', date_, dirName, str(pos))

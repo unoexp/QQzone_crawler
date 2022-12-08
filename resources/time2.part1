@@ -5,10 +5,11 @@
        
     <meta charset="utf-8">
     <script src="../../resources/echarts.js"></script>
-  
+    <link rel="stylesheet" href="../../resources/css.css">  
+
 </head>
 <body>
-	
+    <div class="item">
     <div id="main" style="width: 800px;height:600px;"></div>	
    
    

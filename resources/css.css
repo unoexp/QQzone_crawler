@@ -1,0 +1,36 @@
+.pic {
+  width: 400px;
+  height: auto;
+  box-shadow: 5px 5px 5px gray;  /* 添加灰色阴影 */
+  transition: width 0.5s, height 0.5s;
+  object-fit: contain;
+}
+.pic:hover {
+  width: 95%;
+  height: 95%;
+}
+/* 设置所有段落的样式 */
+.text {
+  font-family: "FangSong", serif;
+  font-weight: bold;  /* 设置字体为 sans-serif */
+}
+
+
+/* 设置所有 div 元素的样式 */
+.item {
+  background-color: #eee;  /* 设置 div 的背景颜色为 #eee */
+  padding: 20px;  /* 添加上下左右的内边距，每边 20px */
+  margin: 0 auto;  /* 将 div 居中对齐 */
+  max-width: 50%;  /* 设置 div 的最大宽度为屏幕宽度的 50% */
+  min-width: 800px;  /* 设置 div 的最小宽度为 800px */
+  margin-bottom: 20px;  /* 添加下边距，20px */
+  overflow: hidden;
+}
+.emojy{
+  width: auto;
+  height: auto;
+}
+.qlogo{
+  width: auto;
+  height: auto;
+}

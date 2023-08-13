@@ -107,9 +107,26 @@ class Get_detail(object):
             mood_item['com_num'] = mood['cmtnum']  # 评论数
             mood_item['phone'] = mood['source_name']  # 设备名
             mood_item['rt'] = mood['rt_sum']  # 累计转发
+
+
+            # pic
+            # pic = 0
+            pic_total = 0
+            try:
+                pic_total = mood['pictotal']
+                for pic in range(0, pic_total):
+                    if 'is_video' in mood['pic'][pic]:
+                        mood_item['pic' + str(pic)] = '1' + mood['pic'][pic]['video_info']['url3']
+                    else:
+                        mood_item['pic' + str(pic)] = '0' + mood['pic'][pic]['url2']
+            except:
+                pass
+            # pic end
+
+            # 单个视频
             # video
             video = False
-            if 'video' in mood:
+            if 'video' in mood and 'pic' not in mood:
                 video = True
                 try:
                     mood_item['video'] = mood['video'][0]['url3']
@@ -117,16 +134,8 @@ class Get_detail(object):
                 except:
                     pass
 
-            # pic
-            pic = 0
-            pic_total = 0
-            try:
-                pic_total = mood['pictotal']
-                for pic in range(0, pic_total):
-                    mood_item['pic' + str(pic)] = mood['pic'][pic]['url2']
-            except:
-                pass
-            # pic end
+
+
             mood_item['locate'] = mood['story_info']['lbs']['name'] if 'story_info' in mood else ''  # 位置名称
             mood_item['loc_pos_x'] = mood['story_info']['lbs']['pos_x'] if 'story_info' in mood else ''  # pos_x
             mood_item['loc_pos_y'] = mood['story_info']['lbs']['pos_y'] if 'story_info' in mood else ''  # pos_y
@@ -176,11 +185,14 @@ class Get_detail(object):
             f.write('<div class="item"><div class="text">' + emoji2pic(mood_item['content']) + '</div>')
 
             for pic in range(0, pic_total):
-                try:
-                    f.write('<br>' + '&nbsp&nbsp<img class="pic" src="' + str(
-                        mood_item['pic' + str(pic)]) + '"' +  '>')
-                except:
-                    break
+                # try:
+                s = mood_item['pic' + str(pic)]
+                if s[0] == '1':
+                    f.write("<br><video src=\"" + s[1:] + "\" controls=\"controls\"></video>")
+                else:
+                    f.write('<br>' + '&nbsp&nbsp<img class="pic" src="' + s[1:] + '"' +  '>')
+                # except:
+                #     break
             if video:
                 try:
                     f.write("<br><video src=\"" + mood_item['video'] + "\" controls=\"controls\"></video>")

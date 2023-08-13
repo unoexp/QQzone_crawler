@@ -15,6 +15,10 @@
   font-weight: bold;  /* 设置字体为 sans-serif */
 }
 
+video {
+  width: 500px;
+  height: auto;
+}
 
 /* 设置所有 div 元素的样式 */
 .item {

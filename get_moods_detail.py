@@ -185,14 +185,14 @@ class Get_detail(object):
             f.write('<div class="item"><div class="text">' + emoji2pic(mood_item['content']) + '</div>')
 
             for pic in range(0, pic_total):
-                # try:
-                s = mood_item['pic' + str(pic)]
-                if s[0] == '1':
-                    f.write("<br><video src=\"" + s[1:] + "\" controls=\"controls\"></video>")
-                else:
-                    f.write('<br>' + '&nbsp&nbsp<img class="pic" src="' + s[1:] + '"' +  '>')
-                # except:
-                #     break
+                try:
+                    s = mood_item['pic' + str(pic)]
+                    if s[0] == '1':
+                        f.write("<br><video src=\"" + s[1:] + "\" controls=\"controls\"></video>")
+                    else:
+                        f.write('<br>' + '&nbsp&nbsp<img class="pic" src="' + s[1:] + '"' +  '>')
+                except:
+                    break
             if video:
                 try:
                     f.write("<br><video src=\"" + mood_item['video'] + "\" controls=\"controls\"></video>")
